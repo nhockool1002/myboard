@@ -17,4 +17,4 @@ jobs:
         server: ftp.ngoaingutreviet.com
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: home/ngoaing9/api/
+        server-dir: /home/ngoaing9/api.ngoaingutreviet.com/
