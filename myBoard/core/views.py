@@ -6,5 +6,5 @@ class HelloView(APIView):
   permission_classes = (IsAuthenticated,)   
 
   def get(self, request):
-      content = {'message': 'Hello, My Board!'}
+      content = {'message': 'Hello, My Board !'}
       return Response(content)
