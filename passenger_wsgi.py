@@ -1,0 +1,1 @@
+from myBoard.wsgi import application
