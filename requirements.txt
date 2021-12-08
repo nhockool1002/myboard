@@ -2,3 +2,4 @@ coverage
 Django
 djangorestframework
 django-environ
+mysqlclient
