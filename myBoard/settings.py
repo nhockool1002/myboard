@@ -27,7 +27,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = 'django-insecure-ph3a&**pr^lq0%!^gt1r2=q-nmv690)06&hr!4ggf25rbdij#t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("MYBOARD_DEBUG")
+DEBUG = env("MYBOARD_DEBUG", default=False)
 
 ALLOWED_HOSTS = ['*']
 
@@ -58,7 +58,7 @@ MIDDLEWARE = [
 
 
 INTERNAL_IPS = [
-    env("MYBOARD_HOST")
+    env("MYBOARD_HOST", default=False)
 ]
 
 ROOT_URLCONF = 'myBoard.urls'
@@ -88,11 +88,11 @@ WSGI_APPLICATION = 'myBoard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': env("MYBOARD_HOSTNAME"),
-        'USER': env("MYBOARD_USERNAME"),
-        'PASSWORD': env("MYBOARD_PASSWORD"),
-        'HOST': env("MYBOARD_HOST"),
-        'PORT': env("MYBOARD_PORT"),
+        'NAME': env("MYBOARD_HOSTNAME", default="myboard"),
+        'USER': env("MYBOARD_USERNAME", default="root"),
+        'PASSWORD': env("MYBOARD_PASSWORD", default="root"),
+        'HOST': env("MYBOARD_HOST", default="127.0.0.1"),
+        'PORT': env("MYBOARD_PORT", default=3306),
     }
 }
 
@@ -142,7 +142,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = env("MYBOARD_STATIC_URL")
+STATIC_URL = env("MYBOARD_STATIC_URL", default="/static/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
