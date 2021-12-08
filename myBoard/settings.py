@@ -19,7 +19,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-print(env("MYBOARD_HOSTNAME"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -30,7 +29,7 @@ SECRET_KEY = 'django-insecure-ph3a&**pr^lq0%!^gt1r2=q-nmv690)06&hr!4ggf25rbdij#t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("MYBOARD_DEBUG")
 
-ALLOWED_HOSTS = ['api.ngoaingutreviet.com']
+ALLOWED_HOSTS = env("MYBOARD_ALLOWED_HOST")
 
 
 # Application definition
