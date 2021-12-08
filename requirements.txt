@@ -1,0 +1,4 @@
+coverage
+Django
+djangorestframework
+django-environ
