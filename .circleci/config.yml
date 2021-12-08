@@ -4,20 +4,13 @@ jobs:
   tests:
     docker:
       - image: circleci/python:3.6.4
-      - image: circleci/postgres:9.6.2-alpine
+      - image: circleci/mysql:5.7
         environment:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: root
-          POSTGRES_DB: myboard
-          MYBOARD_DEBUG: False
-          MYBOARD_ALLOWED_HOST: "*"
-          MYBOARD_HOSTNAME: myboard
-          MYBOARD_USERNAME: root
-          MYBOARD_PASSWORD: root
-          MYBOARD_HOST: 127.0.0.1
-          MYBOARD_PORT: 3306
-          MYBOARD_STATIC_URL: /static/
-          MYBOARD_API_URL: http://localhost:8000
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: myboard
+          MYSQL_ROOT_HOST: 127.0.0.1
+          MYSQL_USER: root
     steps:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/bin

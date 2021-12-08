@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': env("MYBOARD_HOSTNAME", default="myboard"),
         'USER': env("MYBOARD_USERNAME", default="root"),
         'PASSWORD': env("MYBOARD_PASSWORD", default="root"),
-        'HOST': env("MYBOARD_HOST", default="localhost"),
+        'HOST': env("MYBOARD_HOST", default="127.0.0.1"),
         'PORT': env("MYBOARD_PORT", default=3306),
     }
 }
