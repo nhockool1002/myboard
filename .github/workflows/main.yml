@@ -4,6 +4,7 @@ on:
       - master
   pull_request:
     branches:
+      - develop
       - master
     types: [closed]
 name: 🚀 Deploy website on push
