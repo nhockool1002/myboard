@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  toxtest:
+    docker:
+      - image: circleci/python:3.6.7
+      - image: mysql:5.7.22
+        command: ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_bin"]
+        environment:
+          - MYSQL_ROOT_PASSWORD: test
+          - MYSQL_DATABASE: test_test
+          - MYSQL_USER: test
+          - MYSQL_PASSWORD: test
+    steps:
+      - checkout
+      - run:
+          name: venv
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install tox
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      - run:
+          name: test
+          command: |
+            . venv/bin/activate
+            tox
+workflows:
+  version: 2
+  test:
+    jobs:
+      - toxtest
