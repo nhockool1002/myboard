@@ -56,11 +56,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
-INTERNAL_IPS = [
-    env("MYBOARD_HOST")
-]
-
 ROOT_URLCONF = 'myBoard.urls'
 
 TEMPLATES = [
