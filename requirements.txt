@@ -3,3 +3,4 @@ Django
 djangorestframework
 django-environ
 mysqlclient
+requests
