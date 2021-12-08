@@ -29,29 +29,29 @@ jobs:
         pip install -r requirements.txt
     - name: Coverage report
       env:
-        MYBOARD_DEBUG: True
-        MYBOARD_ALLOWED_HOST:'*'
-        MYBOARD_HOSTNAME:myboard
-        MYBOARD_USERNAME=root
-        MYBOARD_PASSWORD=root
-        MYBOARD_HOST=127.0.0.1
-        MYBOARD_PORT=$
-        MYBOARD_STATIC_URL=/static/
-        MYBOARD_API_URL=http://localhost:8000
+        MYBOARD_DEBUG: False
+        MYBOARD_ALLOWED_HOST: "*"
+        MYBOARD_HOSTNAME: myboard
+        MYBOARD_USERNAME: root
+        MYBOARD_PASSWORD: root
+        MYBOARD_HOST: 127.0.0.1
+        MYBOARD_PORT: $
+        MYBOARD_STATIC_URL: /static/
+        MYBOARD_API_URL: http://localhost:8000
       run: |
         pip install coverage
         coverage run manage.py test
         coverage report
     - name: Django Testing
       env:
-          MYBOARD_DEBUG: True
-          MYBOARD_ALLOWED_HOST:'*'
-          MYBOARD_HOSTNAME:myboard
-          MYBOARD_USERNAME=root
-          MYBOARD_PASSWORD=root
-          MYBOARD_HOST=127.0.0.1
-          MYBOARD_PORT=$
-          MYBOARD_STATIC_URL=/static/
-          MYBOARD_API_URL=http://localhost:8000
+        MYBOARD_DEBUG: False
+        MYBOARD_ALLOWED_HOST: "*"
+        MYBOARD_HOSTNAME: myboard
+        MYBOARD_USERNAME: root
+        MYBOARD_PASSWORD: root
+        MYBOARD_HOST: 127.0.0.1
+        MYBOARD_PORT: $
+        MYBOARD_STATIC_URL: /static/
+        MYBOARD_API_URL: http://localhost:8000
       run: |
         python3 manage.py test
