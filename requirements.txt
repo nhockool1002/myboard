@@ -4,3 +4,5 @@ djangorestframework
 django-environ
 mysqlclient
 requests
+virtualenv
+pytz
