@@ -4,4 +4,5 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path(r'api/', include('myBoard.core.urls')),
+    path(r'api/', include('myBoard.s3.urls')),
 ]
