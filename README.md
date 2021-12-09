@@ -6,7 +6,8 @@ python -m virtualenv myboardenv
 
 Run env
 ```
-source myboardenv/Scripts/activate
+(Windows) source myboardenv/Scripts/activate
+(MacOS) source myboardenv/bin/activate
 ```
 
 Install library
