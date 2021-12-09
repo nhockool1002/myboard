@@ -4,6 +4,7 @@ on:
       - main
       - master
       - develop
+name: 💣 Running Django Testing
 jobs:
   build:
 
