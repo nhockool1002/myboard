@@ -10,4 +10,5 @@ urlpatterns = [
     path('s3-upload-single/', s3_views.S3UploadSingle.as_view(), name='s3_upload_single'),
     path('s3-upload-multiple/', s3_views.S3UploadMultiple.as_view(), name='s3_upload_multiple'),
     path('s3-folder/', s3_folder_views.S3Folder.as_view(), name='s3_folder'),
+    path('s3-file/', s3_folder_views.S3File.as_view(), name='s3_folder'),
 ]

@@ -9,3 +9,4 @@ pytz
 boto
 boto3
 django-storages
+uuid

@@ -6,7 +6,9 @@ from rest_framework import status
 from myBoard.s3.utils import *
 from myBoard.s3.models.s3_folder_management import S3FolderManagement
 from myBoard.s3.serializers.s3_folder_management import S3FolderManagementSerializer
-from myBoard.s3.messages import S3_FOLDER_MESSAGE, S3_MESSAGE
+from myBoard.s3.models.s3_file_management import S3FileManagement
+from myBoard.s3.serializers.s3_file_management import S3FileManagementSerializer
+from myBoard.s3.messages import S3_FOLDER_MESSAGE, S3_MESSAGE, S3_FILE_MESSAGE
 
 import re
 import os
@@ -57,7 +59,7 @@ class S3Folder(APIView):
                 return Response({'message': S3_FOLDER_MESSAGE['S3_FOLDER_ID_REQUIRE_INT']}, status=status.HTTP_400_BAD_REQUEST)
             
             folder = S3FolderManagement.objects.filter(id=folder_id)
-            if folder.count() == 0 and folder_id > 0:
+            if folder.count() == 0 or folder_id < 0:
                 logger.error({'message': S3_FOLDER_MESSAGE['S3_FOLDER_NOT_EXIST']})
                 return Response({'message': S3_FOLDER_MESSAGE['S3_FOLDER_NOT_EXIST']}, status=status.HTTP_400_BAD_REQUEST)
             
@@ -146,3 +148,44 @@ class S3Folder(APIView):
             logger.error({'message': str(e)})
             logger.error({'message': S3_FOLDER_MESSAGE['S3_FOLDER_CREATE_FAILED']})
             return Response({'message': S3_FOLDER_MESSAGE['S3_FOLDER_CREATE_FAILED']}, status=status.HTTP_400_BAD_REQUEST)
+
+class S3File(APIView):
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+    def delete(self, request):
+        data = request.GET
+
+        if 'file_id' not in data or data['file_id'] == '':
+            logger.error({'message': S3_FILE_MESSAGE['S3_FILE_ID_NOT_FOUND']})
+            return Response({'message': S3_FILE_MESSAGE['S3_FILE_ID_NOT_FOUND']}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                file_id = int(request.GET['file_id'])
+            except Exception as e:
+                logger.error({'message': str(e)})
+                logger.error({'message': S3_FILE_MESSAGE['S3_FILE_ID_REQUIRE_INT']})
+                return Response({'message': S3_FILE_MESSAGE['S3_FILE_ID_REQUIRE_INT']}, status=status.HTTP_400_BAD_REQUEST)
+            
+            file = S3FileManagement.objects.filter(id=file_id)
+
+            if file.count() == 0 or file_id < 0:
+                logger.error({'message': S3_FILE_MESSAGE['S3_FILE_NOT_EXIST']})
+                return Response({'message': S3_FILE_MESSAGE['S3_FILE_NOT_EXIST']}, status=status.HTTP_400_BAD_REQUEST)
+            
+            file = S3FileManagement.objects.filter(id=file_id).get()
+            file_serializer = S3FileManagementSerializer(file)
+
+            try:
+                s3 = boto3.resource('s3',
+                    aws_access_key_id=os.environ['MYBOARD_AWS_S3_ACCESS_KEY_ID'],
+                    aws_secret_access_key= os.environ['MYBOARD_AWS_S3_SECRET_ACCESS_KEY']
+                )
+                s3.Object(file_serializer.data['bucket_name'], file_serializer.data['file_key']).delete()
+
+                S3FileManagement.objects.filter(file_key=file_serializer.data['file_key']).delete()
+
+                return Response({'message': S3_FILE_MESSAGE['S3_FILE_REMOVE_SUCCESS']}, status=status.HTTP_200_OK)
+            except Exception as e:
+                logger.error({'message': str(e)})
+                logger.error({'message': S3_FILE_MESSAGE['S3_FILE_REMOVE_FAILED']})
+                return Response({'message': S3_FILE_MESSAGE['S3_FILE_REMOVE_FAILED']}, status=status.HTTP_400_BAD_REQUEST)

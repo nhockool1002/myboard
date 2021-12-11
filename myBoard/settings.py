@@ -17,6 +17,10 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+def rel(*path):
+    return os.path.join(BASE_DIR, *path)
+
+
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
@@ -151,5 +155,22 @@ STATIC_URL = env("MYBOARD_STATIC_URL", default="/static/")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-S3_ALLOWED_TYPE = ['image/jpg', 'image/jpeg', 'image/png', 'video/mp4', 'video/mov']
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
+
+S3_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg', '.mp4', 'mov']
 S3_TEMP_FOLDER = 'temp/'
