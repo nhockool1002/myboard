@@ -1,5 +1,6 @@
 version: 2.1
 
+name: 🌕 Running Test in CircleCI
 jobs:
   tests:
     docker:
