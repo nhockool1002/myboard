@@ -150,3 +150,6 @@ STATIC_URL = env("MYBOARD_STATIC_URL", default="/static/")
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+S3_ALLOWED_TYPE = ['image/jpg', 'image/jpeg', 'image/png', 'video/mp4', 'video/mov']
+S3_TEMP_FOLDER = 'temp/'

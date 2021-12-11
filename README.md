@@ -29,3 +29,9 @@ Run
 ```
 python manage.py runserver
 ```
+
+## Note
+Stop mysqld
+```
+net stop MySQL80
+```
