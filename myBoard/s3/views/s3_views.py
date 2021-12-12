@@ -22,7 +22,25 @@ logger = logging.getLogger(__name__)
 
 
 class S3Bucket(APIView):
-    permission_classes = (IsAuthenticated, IsAdminUser)   
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+    def get(self, request):
+        list_bucket = []
+        try:
+            bucket_all_data = S3BucketManagement.objects.all()
+            for bucket in bucket_all_data:
+                data = {
+                    "bucket_name": bucket.bucket_name,
+                    "bucket_region": bucket.bucket_region,
+                    "created_by": bucket.created_by,
+                    "status": bucket.status
+                }
+                list_bucket.append(data)
+            return Response({'data': list_bucket}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error({'message': str(e)})
+            logger.error({'message': S3_MESSAGE['GET_ALL_S3_BUCKET_FAILED']})
+            return Response({'message': S3_MESSAGE['GET_ALL_S3_BUCKET_FAILED']}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
         data = request.data
