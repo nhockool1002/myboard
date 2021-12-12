@@ -14,6 +14,10 @@ class s3Utility:
         return get_client()
     
     @staticmethod
+    def connect_s3_resource():
+        return get_client_resource()
+    
+    @staticmethod
     def get_list_buckets():
         s3_client = get_client()
         response_list_buckets = s3_client.list_buckets()
@@ -42,3 +46,9 @@ class s3Utility:
 def get_client():
     return boto3.client('s3',  aws_access_key_id=os.environ["MYBOARD_AWS_S3_ACCESS_KEY_ID"],
             aws_secret_access_key=os.environ["MYBOARD_AWS_S3_SECRET_ACCESS_KEY"])
+
+def get_client_resource():
+    return boto3.resource('s3',
+            aws_access_key_id=os.environ['MYBOARD_AWS_S3_ACCESS_KEY_ID'],
+            aws_secret_access_key= os.environ['MYBOARD_AWS_S3_SECRET_ACCESS_KEY']
+        )

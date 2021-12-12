@@ -8,6 +8,7 @@ from rest_framework import status
 from myBoard.s3.utils import *
 from myBoard.s3.models.s3_bucket_management import S3BucketManagement
 from myBoard.s3.models.s3_file_management import S3FileManagement
+from myBoard.s3.models.s3_folder_management import S3FolderManagement
 from myBoard.s3.messages import S3_MESSAGE, S3_FOLDER_MESSAGE
 from myBoard.settings import S3_TEMP_FOLDER, S3_ALLOWED_TYPE
 
@@ -189,12 +190,15 @@ class S3UploadSingle(APIView):
         filename = fs.save(f'{S3_TEMP_FOLDER}{uuid_key}-{img_file.name}', img_file)
         uploaded_file_path = fs.path(filename)
 
+        get_folder_id = S3FolderManagement.objects.get(folder_key=folder_key)
+
         try:
             s3_client.upload_file(uploaded_file_path, bucket_name, f'{folder_key}/{uuid_key}-{img_file.name}', ExtraArgs={'ACL': 'public-read'})
             uploaded_data = {
                 "file_name": img_file.name,
                 "file_key": f'{folder_key}/{uuid_key}-{img_file.name}',
                 "bucket_name": bucket_name,
+                "folder_id": get_folder_id.id,
                 "created_by": request.user.username,
                 "updated_by": request.user.username
             }
@@ -249,6 +253,7 @@ class S3UploadMultiple(APIView):
                 return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_UNVALID_EXT']}, status=status.HTTP_400_BAD_REQUEST)
         # Connect S3
         s3_client = s3Utility.connect_s3()
+        get_folder_id = S3FolderManagement.objects.get(folder_key=folder_key)
 
         for item in img_files:
             uuid_key = uuid.uuid4()
@@ -262,6 +267,7 @@ class S3UploadMultiple(APIView):
                     "file_name": item.name,
                     "file_key": f'{folder_key}/{uuid_key}-{item.name}',
                     "bucket_name": bucket_name,
+                    "folder_id": get_folder_id.id,
                     "created_by": request.user.username,
                     "updated_by": request.user.username
                 }

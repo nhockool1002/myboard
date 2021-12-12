@@ -10,6 +10,8 @@ from myBoard.s3.models.s3_file_management import S3FileManagement
 from myBoard.s3.serializers.s3_file_management import S3FileManagementSerializer
 from myBoard.s3.messages import S3_FOLDER_MESSAGE, S3_MESSAGE, S3_FILE_MESSAGE
 
+from django.core.paginator import Paginator
+
 import re
 import os
 import logging
@@ -59,7 +61,7 @@ class S3Folder(APIView):
                 return Response({'message': S3_FOLDER_MESSAGE['S3_FOLDER_ID_REQUIRE_INT']}, status=status.HTTP_400_BAD_REQUEST)
             
             folder = S3FolderManagement.objects.filter(id=folder_id)
-            if folder.count() == 0 or folder_id < 0:
+            if folder.count() == 0 or folder_id <= 0:
                 logger.error({'message': S3_FOLDER_MESSAGE['S3_FOLDER_NOT_EXIST']})
                 return Response({'message': S3_FOLDER_MESSAGE['S3_FOLDER_NOT_EXIST']}, status=status.HTTP_400_BAD_REQUEST)
             
@@ -73,10 +75,7 @@ class S3Folder(APIView):
                     for object in response['Contents']:
                         s3_client.delete_object(Bucket=f'{folder_serializer.data["bucket_name"]}', Key=object['Key'])
 
-                s3 = boto3.resource('s3',
-                    aws_access_key_id=os.environ['MYBOARD_AWS_S3_ACCESS_KEY_ID'],
-                    aws_secret_access_key= os.environ['MYBOARD_AWS_S3_SECRET_ACCESS_KEY']
-                )
+                s3 = s3Utility.connect_s3_resource()
                 bucket = s3.Bucket(f'{folder_serializer.data["bucket_name"]}')
                 bucket.objects.filter(Prefix=f'{folder_serializer.data["folder_key"]}/').delete()
 
@@ -168,7 +167,7 @@ class S3File(APIView):
             
             file = S3FileManagement.objects.filter(id=file_id)
 
-            if file.count() == 0 or file_id < 0:
+            if file.count() == 0 or file_id <= 0:
                 logger.error({'message': S3_FILE_MESSAGE['S3_FILE_NOT_EXIST']})
                 return Response({'message': S3_FILE_MESSAGE['S3_FILE_NOT_EXIST']}, status=status.HTTP_400_BAD_REQUEST)
             
@@ -176,10 +175,7 @@ class S3File(APIView):
             file_serializer = S3FileManagementSerializer(file)
 
             try:
-                s3 = boto3.resource('s3',
-                    aws_access_key_id=os.environ['MYBOARD_AWS_S3_ACCESS_KEY_ID'],
-                    aws_secret_access_key= os.environ['MYBOARD_AWS_S3_SECRET_ACCESS_KEY']
-                )
+                s3 = s3Utility.connect_s3_resource()
                 s3.Object(file_serializer.data['bucket_name'], file_serializer.data['file_key']).delete()
 
                 S3FileManagement.objects.filter(file_key=file_serializer.data['file_key']).delete()
@@ -189,3 +185,64 @@ class S3File(APIView):
                 logger.error({'message': str(e)})
                 logger.error({'message': S3_FILE_MESSAGE['S3_FILE_REMOVE_FAILED']})
                 return Response({'message': S3_FILE_MESSAGE['S3_FILE_REMOVE_FAILED']}, status=status.HTTP_400_BAD_REQUEST)
+
+class S3GetListFileByFolder(APIView):
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+    def get(self, request):
+        data = request.GET
+        total = 0
+        page = 0
+        row_per_page = 2
+        list_obj_data = []
+        list_data = []
+
+        # Check bucketname available
+        if 'bucket_name' not in data or data['bucket_name'] == '':
+            logger.error({'message': S3_MESSAGE['EMPTY_BUCKET_NAME']})
+            return Response({'message': S3_MESSAGE['EMPTY_BUCKET_NAME']}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            bucket_name = data['bucket_name']
+        
+        # Check folder_key available
+        if 'folder_key' not in data or data['folder_key'] == '':
+            logger.error({'message': S3_FOLDER_MESSAGE['EMPTY_S3_FOLDER_KEY']})
+            return Response({'message': S3_FOLDER_MESSAGE['EMPTY_S3_FOLDER_KEY']}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            folder_key = data['folder_key']
+
+        # Check folder_key available
+        if 'page' not in data or data['page'] == '':
+            logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_IS_REQUIRED']})
+            return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_IS_REQUIRED']}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                page = int(data['page'])
+                if page <= 0:
+                    logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_GREATHAN_0']})
+                    return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_GREATHAN_0']}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                logger.error({'message': str(e)})
+                logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_REQUIRE_INT']})
+                return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_REQUIRE_INT']}, status=status.HTTP_400_BAD_REQUEST)
+
+        s3 = s3Utility.connect_s3_resource()
+        bucket_name = s3.Bucket(bucket_name)
+        get_folder_id = S3FolderManagement.objects.get(folder_key=folder_key)
+        get_all_data_by_folder_id = S3FileManagement.objects.filter(folder_id=get_folder_id.id)
+        list_all_data_by_folder_id = S3FileManagementSerializer(get_all_data_by_folder_id, many=True)
+        for ia in list_all_data_by_folder_id.data:
+            list_obj_data.append(ia)
+
+        total = get_all_data_by_folder_id.count()
+
+        for object_summary in list_obj_data:
+            url = s3Utility.get_object_url(object_summary["bucket_name"], object_summary["file_key"])
+            list_data.append(url)
+
+        p = Paginator(list_data, row_per_page)
+        if page > p.num_pages:
+            logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_EMPTY_DATA']})
+            return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_EMPTY_DATA']}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'total': total, 'page': page, 'data': p.page(page).object_list}, status=status.HTTP_200_OK)
