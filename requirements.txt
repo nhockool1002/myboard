@@ -10,3 +10,5 @@ boto
 boto3
 django-storages
 uuid
+django-cors-headers
+
