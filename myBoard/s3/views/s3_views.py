@@ -31,6 +31,7 @@ class S3Bucket(APIView):
             bucket_all_data = S3BucketManagement.objects.all()
             for bucket in bucket_all_data:
                 data = {
+                    "id": bucket.id,
                     "bucket_name": bucket.bucket_name,
                     "bucket_region": bucket.bucket_region,
                     "created_by": bucket.created_by,

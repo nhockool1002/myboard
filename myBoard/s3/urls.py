@@ -12,4 +12,5 @@ urlpatterns = [
     path('s3-folder/', s3_folder_views.S3Folder.as_view(), name='s3_folder'),
     path('s3-file/', s3_folder_views.S3File.as_view(), name='s3_folder'),
     path('s3-object-by-folder/', s3_folder_views.S3GetListFileByFolder.as_view(), name='s3_obj_by_folder'),
+    path('get-folder-by-bucket-id/', s3_folder_views.GetFolderByBucketId.as_view(), name='s3_folder'),
 ]

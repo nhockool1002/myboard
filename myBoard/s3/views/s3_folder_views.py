@@ -255,3 +255,31 @@ class S3GetListFileByFolder(APIView):
             return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_EMPTY_DATA']}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'total': total, 'page': page, 'data': p.page(page).object_list}, status=status.HTTP_200_OK)
+
+class GetFolderByBucketId(APIView):
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+    def get(data, request):
+        data = request.GET
+
+        # Check bucketname available
+        if 'bucket_id' not in data or data['bucket_id'] == '':
+            logger.error({'message': S3_MESSAGE['EMPTY_BUCKET_ID']})
+            return Response({'message': S3_MESSAGE['EMPTY_BUCKET_ID']}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            bucket_id = data['bucket_id']
+        
+        try:
+            folder = S3FolderManagement.objects.filter(bucket_id=bucket_id)
+        except S3FolderManagement.DoesNotExist as e:
+            logger.error({'message': str(e)})
+            logger.error({'message': S3_MESSAGE['BUCKET_ID_NOT_EXISTS']})
+            return Response({'message': S3_MESSAGE['BUCKET_ID_NOT_EXISTS']}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error({'message': str(e)})
+            logger.error({'message': S3_MESSAGE['BUCKET_ID_NOT_EXISTS']})
+            return Response({'message': S3_MESSAGE['BUCKET_ID_NOT_EXISTS']}, status=status.HTTP_400_BAD_REQUEST)
+        
+        folder_serializer = S3FolderManagementSerializer(folder, many=True)
+        return Response({'data': folder_serializer.data}, status=status.HTTP_200_OK)
+
