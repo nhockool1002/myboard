@@ -176,7 +176,7 @@ LOGGING = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    env("MYBOARD_ALLOWED_HOSTS_FRONTEND", default="")
+    env("MYBOARD_ALLOWED_HOSTS_FRONTEND", default="http://localhost:3000")
 ]
 S3_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg', '.mp4', 'mov']
 S3_TEMP_FOLDER = 'temp/'
