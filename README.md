@@ -27,7 +27,8 @@ python manage.py createsuperuser
 
 Run
 ```
-python manage.py runserver
+(Windows)  winpty python manage.py createsuperuser
+(MacOS) python manage.py runserver
 ```
 
 ## Note

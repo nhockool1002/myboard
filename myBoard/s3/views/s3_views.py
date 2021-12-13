@@ -4,6 +4,7 @@ from rest_framework.parsers import FileUploadParser, MultiPartParser
 from django.core.files.storage import FileSystemStorage
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
+from django.core.exceptions import ObjectDoesNotExist
 
 from myBoard.s3.utils import *
 from myBoard.s3.models.s3_bucket_management import S3BucketManagement
@@ -202,6 +203,14 @@ class S3UploadSingle(APIView):
         if file_ext not in S3_ALLOWED_TYPE:
             logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_UNVALID_EXT']})
             return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_UNVALID_EXT']}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            bucket = S3BucketManagement.objects.get(bucket_name=bucket_name)
+        except S3BucketManagement.DoesNotExist as e:
+            logger.error({'message': str(e)})
+            logger.error({'message': S3_MESSAGE['BUCKET_NAME_NOT_EXIST']})
+            return Response({'message': S3_MESSAGE['BUCKET_NAME_NOT_EXIST']}, status=status.HTTP_400_BAD_REQUEST)
+            
 
         s3_client = s3Utility.connect_s3()
         fs = FileSystemStorage()
@@ -218,7 +227,8 @@ class S3UploadSingle(APIView):
                 "bucket_name": bucket_name,
                 "folder_id": get_folder_id.id,
                 "created_by": request.user.username,
-                "updated_by": request.user.username
+                "updated_by": request.user.username,
+                "bucket_id": bucket.id,
             }
             S3FileManagement.objects.create(**uploaded_data)
         except Exception as e:

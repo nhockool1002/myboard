@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
+from myBoard.s3.models.s3_bucket_management import S3BucketManagement
 
 from myBoard.s3.utils import *
 from myBoard.s3.models.s3_folder_management import S3FolderManagement
@@ -124,6 +125,13 @@ class S3Folder(APIView):
         else:
             logger.error({'message': S3_FOLDER_MESSAGE['S3_FOLDER_KEY_CONTAINS_SPECIAL_CHAR']})
             return Response({'message': S3_FOLDER_MESSAGE['S3_FOLDER_KEY_CONTAINS_SPECIAL_CHAR']}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            bucket = S3BucketManagement.objects.get(bucket_name=bucket_name)
+        except S3BucketManagement.DoesNotExist as e:
+            logger.error({'message': str(e)})
+            logger.error({'message': S3_MESSAGE['BUCKET_NAME_NOT_EXIST']})
+            return Response({'message': S3_MESSAGE['BUCKET_NAME_NOT_EXIST']}, status=status.HTTP_400_BAD_REQUEST)
         
         # Get list buckets
         list_buckets = s3Utility.get_list_buckets()
@@ -138,6 +146,7 @@ class S3Folder(APIView):
             "bucket_name": bucket_name,
             "created_by": request.user.username,
             "updated_by": request.user.username,
+            "bucket_id": bucket.id,
         }
 
         try:
