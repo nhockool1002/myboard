@@ -202,7 +202,7 @@ class S3GetListFileByFolder(APIView):
         data = request.GET
         total = 0
         page = 0
-        row_per_page = 2
+        row_per_page = 12
         list_obj_data = []
         list_data = []
 
@@ -235,8 +235,8 @@ class S3GetListFileByFolder(APIView):
                 logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_REQUIRE_INT']})
                 return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_REQUIRE_INT']}, status=status.HTTP_400_BAD_REQUEST)
 
-        s3 = s3Utility.connect_s3_resource()
-        bucket_name = s3.Bucket(bucket_name)
+        # s3 = s3Utility.connect_s3_resource()
+        # bucket_name = s3.Bucket(bucket_name)
         get_folder_id = S3FolderManagement.objects.get(folder_key=folder_key)
         get_all_data_by_folder_id = S3FileManagement.objects.filter(folder_id=get_folder_id.id)
         list_all_data_by_folder_id = S3FileManagementSerializer(get_all_data_by_folder_id, many=True)
@@ -246,15 +246,19 @@ class S3GetListFileByFolder(APIView):
         total = get_all_data_by_folder_id.count()
 
         for object_summary in list_obj_data:
-            url = s3Utility.get_object_url(object_summary["bucket_name"], object_summary["file_key"])
-            list_data.append(url)
+            item = {
+                "id": object_summary["id"],
+                "url": s3Utility.get_object_url(object_summary["bucket_name"], object_summary["file_key"])
+            }
+           
+            list_data.append(item)
 
         p = Paginator(list_data, row_per_page)
         if page > p.num_pages:
             logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_EMPTY_DATA']})
             return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_PAGE_EMPTY_DATA']}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'total': total, 'page': page, 'data': p.page(page).object_list}, status=status.HTTP_200_OK)
+        return Response({'total': total, 'page': page, 'num_pages': p.num_pages, 'row_per_page': row_per_page, 'data': p.page(page).object_list}, status=status.HTTP_200_OK)
 
 class GetFolderByBucketId(APIView):
     permission_classes = (IsAuthenticated, IsAdminUser)

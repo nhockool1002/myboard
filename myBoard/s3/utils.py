@@ -39,9 +39,9 @@ class s3Utility:
     
     @staticmethod
     def get_object_url(bucket_name, key_name):
-        s3_client = get_client()
-        location = s3_client.get_bucket_location(Bucket=bucket_name)['LocationConstraint']
-        return f"https://%s.s3.%s.amazonaws.com/%s" % (bucket_name, location, urllib.parse.quote(key_name, safe="~()*!.'"))
+        # s3_client = get_client()
+        # location = s3_client.get_bucket_location(Bucket=bucket_name)['LocationConstraint']
+        return f"https://%s.s3.%s.amazonaws.com/%s" % (bucket_name, os.environ["MYBOARD_REGION"], urllib.parse.quote(key_name, safe="~()*!.'"))
 
 def get_client():
     return boto3.client('s3',  aws_access_key_id=os.environ["MYBOARD_AWS_S3_ACCESS_KEY_ID"],
