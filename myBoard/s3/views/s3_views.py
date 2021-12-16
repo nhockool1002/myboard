@@ -79,7 +79,7 @@ class S3Bucket(APIView):
         return Response({'message': S3_MESSAGE['CREATE_BUCKET_NAME_SUCCESS']}, status=status.HTTP_200_OK)
 
     def delete(self, request):
-        data = request.data
+        data = request.GET
 
         # Check bucketname available
         if 'bucket_name' not in data or data['bucket_name'] == '':
@@ -166,6 +166,7 @@ class SetS3BucketPublicAccess(APIView):
             bucket_policy = json.dumps(bucket_policy)
             s3_client = s3Utility.connect_s3()
             s3_client.put_bucket_policy(Bucket=bucket_name, Policy=bucket_policy)
+            S3BucketManagement.objects.filter(bucket_name=bucket_name).update(status=1);
             return Response({'message': S3_MESSAGE['SET_POLICY_BUCKET_PUBLIC_SUCCESS']}, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error({'message': str(e)})
