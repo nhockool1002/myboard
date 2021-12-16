@@ -148,3 +148,27 @@ STATIC_URL = env("MYBOARD_STATIC_URL", default="/static/")
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
+
+CORS_ALLOWED_ORIGINS = [
+    env("MYBOARD_ALLOWED_HOSTS_FRONTEND", default="http://localhost:3000")
+]
+CORS_ORIGIN_ALLOW_ALL = True
+S3_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg', '.mp4', 'mov']
+S3_TEMP_FOLDER = 'temp/'
