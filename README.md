@@ -6,7 +6,8 @@ python -m virtualenv myboardenv
 
 Run env
 ```
-source myboardenv/Scripts/activate
+(Windows) source myboardenv/Scripts/activate
+(MacOS) source myboardenv/bin/activate
 ```
 
 Install library
@@ -26,5 +27,12 @@ python manage.py createsuperuser
 
 Run
 ```
-python manage.py runserver
+(Windows)  winpty python manage.py createsuperuser
+(MacOS) python manage.py runserver
+```
+
+## Note
+Stop mysqld
+```
+net stop MySQL80
 ```

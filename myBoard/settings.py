@@ -17,6 +17,10 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+def rel(*path):
+    return os.path.join(BASE_DIR, *path)
+
+
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
@@ -44,6 +48,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'myBoard.core',
+    'myBoard.s3',
+    'storages',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -54,6 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 
@@ -148,3 +157,26 @@ STATIC_URL = env("MYBOARD_STATIC_URL", default="/static/")
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
+
+CORS_ALLOWED_ORIGINS = [
+    env("MYBOARD_ALLOWED_HOSTS_FRONTEND", default="http://localhost:3000")
+]
+S3_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg', '.mp4', 'mov']
+S3_TEMP_FOLDER = 'temp/'

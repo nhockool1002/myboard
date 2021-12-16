@@ -1,5 +1,6 @@
 version: 2.1
 
+name: 🌕 Running Test in CircleCI
 jobs:
   tests:
     docker:
@@ -27,7 +28,9 @@ jobs:
             - ".venv"
             - "/usr/local/bin"
             - "/usr/local/lib/python3.6/site-packages"
-      - run: python manage.py test
+      - run: |
+          python manage.py migrate
+          python manage.py test
 
 workflows:
   main:
