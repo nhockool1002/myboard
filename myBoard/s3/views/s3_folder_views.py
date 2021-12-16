@@ -285,5 +285,13 @@ class GetFolderByBucketId(APIView):
             return Response({'message': S3_MESSAGE['BUCKET_ID_NOT_EXISTS']}, status=status.HTTP_400_BAD_REQUEST)
         
         folder_serializer = S3FolderManagementSerializer(folder, many=True)
-        return Response({'data': folder_serializer.data}, status=status.HTTP_200_OK)
+        list_data = []
+        for item in folder_serializer.data:
+            image_thumb = S3FileManagement.objects.filter(folder_id=item["id"]).first()
+            data = item
+            if image_thumb is not None:
+                data["image_thumb"] = s3Utility.get_object_url(image_thumb.bucket_name, image_thumb.file_key)
+            else: data["image_thumb"] = ""
+            list_data.append(data)
+        return Response({'data': list_data}, status=status.HTTP_200_OK)
 
