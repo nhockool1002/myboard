@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'myBoard.core',
     'myBoard.s3',
+    'myBoard.setting',
     'storages',
     'corsheaders'
 ]
