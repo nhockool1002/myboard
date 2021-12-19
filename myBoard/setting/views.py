@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import status
 from myBoard.setting.models import Settings
 from myBoard.setting.messages import SETTING
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class SettingsAPI(APIView):
-    permission_classes = (IsAuthenticated, IsAdminUser)
+    permission_classes = [AllowAny]
 
     def get(self, request):
         try:
