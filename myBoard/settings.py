@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'myBoard.core',
     'myBoard.s3',
+    'myBoard.setting',
     'storages',
     'corsheaders'
 ]
@@ -180,4 +181,5 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 S3_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg', '.mp4', 'mov']
+THUMBNAILD_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg']
 S3_TEMP_FOLDER = 'temp/'
