@@ -6,4 +6,5 @@ urlpatterns = [
     path(r'api/', include('myBoard.core.urls')),
     path(r'api/', include('myBoard.s3.urls')),
     path(r'api/', include('myBoard.setting.urls')),
+    path(r'api/', include('myBoard.notes.urls')),
 ]
