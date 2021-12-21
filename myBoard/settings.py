@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'myBoard.core',
     'myBoard.s3',
     'myBoard.setting',
+    'myBoard.notes',
     'storages',
     'corsheaders'
 ]
