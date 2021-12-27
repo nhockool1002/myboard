@@ -248,7 +248,8 @@ class S3GetListFileByFolder(APIView):
         for object_summary in list_obj_data:
             item = {
                 "id": object_summary["id"],
-                "url": s3Utility.get_object_url(object_summary["bucket_name"], object_summary["file_key"])
+                "url": s3Utility.get_object_url(object_summary["bucket_name"], object_summary["file_key"]),
+                "file_type": object_summary["file_type"]
             }
            
             list_data.append(item)

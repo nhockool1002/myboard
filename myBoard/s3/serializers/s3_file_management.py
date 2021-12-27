@@ -14,4 +14,5 @@ class S3FileManagementSerializer(serializers.ModelSerializer):
             'created_by',
             'updated_by',
             'folder',
+            'file_type'
         ]

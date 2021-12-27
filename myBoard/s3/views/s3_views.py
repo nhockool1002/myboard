@@ -278,7 +278,7 @@ class S3UploadMultiple(APIView):
         # Check Extension
         for item in list_file_name:
             file_name, file_ext = os.path.splitext(item)
-            if file_ext not in S3_ALLOWED_TYPE:
+            if file_ext.lower() not in S3_ALLOWED_TYPE:
                 logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_UNVALID_EXT']})
                 return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_UNVALID_EXT']}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -294,9 +294,16 @@ class S3UploadMultiple(APIView):
         get_folder_id = S3FolderManagement.objects.get(folder_key=folder_key)
 
         for item in img_files:
+            file_type = ''
             uuid_key = uuid.uuid4()
             fs = FileSystemStorage()
             filename = fs.save(f'{S3_TEMP_FOLDER}{uuid_key}-{item.name}', item)
+            file_o_name, file_o_ext = os.path.splitext(filename)
+            if file_o_ext in ['.jpg', '.png', '.jpeg']:
+                file_type = 'image'
+            else:
+                file_type = 'video'
+
             uploaded_file_path = fs.path(filename)
             
             try:
@@ -308,7 +315,8 @@ class S3UploadMultiple(APIView):
                     "folder_id": get_folder_id.id,
                     "created_by": request.user.username,
                     "updated_by": request.user.username,
-                    "bucket_id": bucket.id
+                    "bucket_id": bucket.id,
+                    "file_type": file_type
                 }
                 S3FileManagement.objects.create(**uploaded_data)
             except Exception as e:

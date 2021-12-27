@@ -12,6 +12,7 @@ class S3FileManagement(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.CharField(max_length=255, blank=True, null=True)
     updated_by = models.CharField(max_length=255, blank=True, null=True)
+    file_type = models.CharField(max_length=255, blank=True, null=True)
     folder = models.ForeignKey(
         S3FolderManagement, on_delete=models.CASCADE, to_field="id", null=True, blank=True)
     bucket = models.ForeignKey(
