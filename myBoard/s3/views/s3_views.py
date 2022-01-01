@@ -299,7 +299,7 @@ class S3UploadMultiple(APIView):
             fs = FileSystemStorage()
             filename = fs.save(f'{S3_TEMP_FOLDER}{uuid_key}-{item.name}', item)
             file_o_name, file_o_ext = os.path.splitext(filename)
-            if file_o_ext in ['.jpg', '.png', '.jpeg']:
+            if file_o_ext.lower() in ['.jpg', '.png', '.jpeg']:
                 file_type = 'image'
             else:
                 file_type = 'video'
