@@ -8,4 +8,5 @@ urlpatterns = [
     path(r'api/', include('myBoard.setting.urls')),
     path(r'api/', include('myBoard.notes.urls')),
     path(r'api/', include('myBoard.moneyExchange.urls')),
+    path(r'api/', include('myBoard.categories.urls')),
 ]
