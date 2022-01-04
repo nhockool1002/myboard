@@ -47,10 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    # Intenal System
     'myBoard.core',
     'myBoard.s3',
     'myBoard.setting',
     'myBoard.notes',
+    # Extenal System
+    'myBoard.categories',
     'storages',
     'corsheaders'
 ]
