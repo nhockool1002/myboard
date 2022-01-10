@@ -85,31 +85,31 @@ class ExLabelsAPI(APIView):
             logger.error({'message': EX_LABELS['MYBOARD_LABEL_CREATE_FAILED']})
             return Response({'message': EX_LABELS['MYBOARD_LABEL_CREATE_FAILED']}, status=status.HTTP_400_BAD_REQUEST)
 
-    # def patch(self, request, id=None):
-    #     data = request.data
+    def patch(self, request, id=None):
+        data = request.data
 
-    #     try:
-    #         if id is not None and isinstance(id, int):
-    #             item = ExCategories.objects.get(id=id)
-    #             serializer = ExCategoriesSerializer(item, data=data, partial=True)
-    #             if serializer.is_valid():
-    #                 serializer.save()
-    #                 return Response({"status": "success", "data": serializer.data})
-    #             else:
-    #                 return Response({"status": "error", "data": serializer.errors})
-    #         else:
-    #             logger.error({'message': EX_LABELS['MYBOARD_LABEL_ID_NOT_FOUND']})
-    #             return Response({'message': EX_LABELS['MYBOARD_LABEL_ID_NOT_FOUND']}, status=status.HTTP_400_BAD_REQUEST)
-
-    #     except Exception as e:
-    #         logger.error({"message": str(e)})
-    #         logger.error({'message': EX_LABELS['MYBOARD_LABEL_UPDATE_FAILED']})
-    #         return Response({'message': EX_LABELS['MYBOARD_LABEL_UPDATE_FAILED']}, status=status.HTTP_400_BAD_REQUEST)
-
-    # def delete(self, request, id=None):
         try:
             if id is not None and isinstance(id, int):
-                item = get_object_or_404(ExCategories, id=id)
+                item = ExLabels.objects.get(id=id)
+                serializer = ExLabelsSerializer(item, data=data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({"status": "success", "data": serializer.data})
+                else:
+                    return Response({"status": "error", "data": serializer.errors})
+            else:
+                logger.error({'message': EX_LABELS['MYBOARD_LABEL_ID_NOT_FOUND']})
+                return Response({'message': EX_LABELS['MYBOARD_LABEL_ID_NOT_FOUND']}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            logger.error({"message": str(e)})
+            logger.error({'message': EX_LABELS['MYBOARD_LABEL_UPDATE_FAILED']})
+            return Response({'message': EX_LABELS['MYBOARD_LABEL_UPDATE_FAILED']}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id=None):
+        try:
+            if id is not None and isinstance(id, int):
+                item = get_object_or_404(ExLabels, id=id)
                 item.delete()
                 return Response({"status": "success", "data": "Item Deleted"}, status=status.HTTP_200_OK)
             else:
@@ -119,5 +119,3 @@ class ExLabelsAPI(APIView):
             logger.error({"message": str(e)})
             logger.error({'message': EX_LABELS['MYBOARD_LABEL_DELETE_FAILED']})
             return Response({'message': EX_LABELS['MYBOARD_LABEL_DELETE_FAILED']}, status=status.HTTP_400_BAD_REQUEST)
-
-
