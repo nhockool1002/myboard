@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'myBoard.notes',
     # Extenal System
     'myBoard.categories',
+    'myBoard.labels',
     'storages',
     'corsheaders'
 ]

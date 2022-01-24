@@ -320,6 +320,7 @@ class S3UploadMultiple(APIView):
                 }
                 S3FileManagement.objects.create(**uploaded_data)
             except Exception as e:
+                logger.error({'message': str(e)})
                 logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_FAILED']})
                 return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_FAILED']}, status=status.HTTP_400_BAD_REQUEST)
 
