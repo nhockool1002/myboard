@@ -80,7 +80,7 @@ class MoneyExchangeAPI(APIView):
             logger.error({'message': MONEY_EXCHANGE['MONEY_EXCHANGE_KEY_SETTING_NOT_FOUND']})
             return Response({'message': MONEY_EXCHANGE['MONEY_EXCHANGE_KEY_SETTING_NOT_FOUND']}, status=status.HTTP_400_BAD_REQUEST)
 
-        list_data = requests.get('%s/api/v2/latest?apikey=%s&base_currency=%s' % (domain, key, base))
+        list_data = requests.get('%s/v2/latest?apikey=%s&base_currency=%s' % (domain, key, base))
         list_currency = list_data.json()['data']
 
         if des not in list_currency:
@@ -161,7 +161,7 @@ class HistoricalMoneyAPI(APIView):
             logger.error({'message': MONEY_EXCHANGE['MONEY_EXCHANGE_KEY_SETTING_NOT_FOUND']})
             return Response({'message': MONEY_EXCHANGE['MONEY_EXCHANGE_KEY_SETTING_NOT_FOUND']}, status=status.HTTP_400_BAD_REQUEST)
 
-        list_data = requests.get('%s/v3/historical?apikey=%s&base_currency=%s&date_from=%s&date_to=%s' % (domain, key, base, start_date, end_date))
+        list_data = requests.get('%s/v2/historical?apikey=%s&base_currency=%s&datetime_start=%s&datetime_end=%s' % (domain, key, base, start_date, end_date))
         list_historical = list_data.json()['data']
 
         list_key = []
