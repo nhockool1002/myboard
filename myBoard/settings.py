@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'myBoard.s3',
     'myBoard.setting',
     'myBoard.notes',
+    'myBoard.license',
     # Extenal System
     'myBoard.categories',
     'myBoard.labels',
@@ -137,6 +138,9 @@ REST_FRAMEWORK = {
    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAdminUser'
    ),
+   'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
 }
 
 
