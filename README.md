@@ -36,3 +36,14 @@ Stop mysqld
 ```
 net stop MySQL80
 ```
+
+Create new app
+```
+django-admin startapp app_name
+```
+
+Run Migration
+```
+python manage.py makemigrations app_name
+python manage.py migrate app_name
+```
