@@ -56,8 +56,7 @@ class LicenseAPI(APIView):
         else:
             return Response({'message': LICENSE['LICENSE_NOT_EXISTED']}, status=status.HTTP_400_BAD_REQUEST)
 
-        res = Response({"data": obj_data.data, "status": status.HTTP_200_OK})
-        res['Access-Control-Allow-Origin'] = '*'
+        res = Response({"data": obj_data.data, "status": status.HTTP_200_OK, 'html': LICENSE['HTML_PARSE_ERROR_LICENSE']})
         return res
 
     def post(self, request):
