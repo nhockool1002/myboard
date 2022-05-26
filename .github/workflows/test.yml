@@ -1,0 +1,25 @@
+on: 
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - develop
+      - master
+    types: [closed]
+name: 🚀 Deploy API NHUTVPS
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v2
+    
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.2.0
+      with:
+        server: ftp://116.118.49.192
+        username: ${{ secrets.FTP_NHUT_VPS_USER }}
+        password: ${{ secrets.FTP_NHUT_VPS_PASS }}
+        server-dir: /
