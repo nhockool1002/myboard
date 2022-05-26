@@ -19,7 +19,7 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
-        server: ftp@116.118.49.192
+        server: codelumla.tk
         username: ${{ secrets.FTP_NHUT_VPS_USER }}
         password: ${{ secrets.FTP_NHUT_VPS_PASS }}
         server-dir: /

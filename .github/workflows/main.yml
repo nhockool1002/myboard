@@ -1,25 +1,25 @@
-on: 
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - develop
-      - master
-    types: [closed]
-name: 🚀 Deploy website on push
-jobs:
-  web-deploy:
-    name: 🎉 Deploy
-    runs-on: ubuntu-latest
-    steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v2
+# on: 
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     branches:
+#       - develop
+#       - master
+#     types: [closed]
+# name: 🚀 Deploy website on push
+# jobs:
+#   web-deploy:
+#     name: 🎉 Deploy
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: 🚚 Get latest code
+#       uses: actions/checkout@v2
     
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.2.0
-      with:
-        server: ftp.ngoaingutreviet.com
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /myboardapi/
+#     - name: 📂 Sync files
+#       uses: SamKirkland/FTP-Deploy-Action@4.2.0
+#       with:
+#         server: ngoaingutreviet.com
+#         username: ${{ secrets.FTP_USERNAME }}
+#         password: ${{ secrets.FTP_PASSWORD }}
+#         server-dir: /myboardapi/
