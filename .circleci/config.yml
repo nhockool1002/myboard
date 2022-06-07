@@ -1,10 +1,11 @@
 version: 2.1
 
+name: 🌕 Running Test in CircleCI
 jobs:
   tests:
     docker:
       - image: circleci/python:3.6.4
-      - image: circleci/mysql:5.7
+      - image: circleci/mysql:5.7.32-ram
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_ROOT_PASSWORD: root
@@ -27,7 +28,9 @@ jobs:
             - ".venv"
             - "/usr/local/bin"
             - "/usr/local/lib/python3.6/site-packages"
-      - run: python manage.py test
+      - run: |
+          python manage.py migrate
+          python manage.py test
 
 workflows:
   main:

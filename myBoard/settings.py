@@ -17,6 +17,10 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+def rel(*path):
+    return os.path.join(BASE_DIR, *path)
+
+
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
@@ -43,11 +47,23 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    # Intenal System
     'myBoard.core',
+    'myBoard.s3',
+    'myBoard.setting',
+    'myBoard.notes',
+    'myBoard.license',
+    # Extenal System
+    'myBoard.categories',
+    'myBoard.labels',
+    'storages',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -122,6 +138,9 @@ REST_FRAMEWORK = {
    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAdminUser'
    ),
+   'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
 }
 
 
@@ -148,3 +167,28 @@ STATIC_URL = env("MYBOARD_STATIC_URL", default="/static/")
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
+
+CORS_ALLOWED_ORIGINS = [
+    env("MYBOARD_ALLOWED_HOSTS_FRONTEND", default="http://localhost:3000")
+]
+CORS_ORIGIN_ALLOW_ALL = True
+S3_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg', '.mp4', '.mov']
+THUMBNAILD_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg']
+S3_TEMP_FOLDER = 'temp/'
