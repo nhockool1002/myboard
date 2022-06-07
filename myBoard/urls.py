@@ -11,4 +11,5 @@ urlpatterns = [
     path(r'api/', include('myBoard.categories.urls')),
     path(r'api/', include('myBoard.labels.urls')),
     path(r'api/', include('myBoard.license.urls')),
+    path(r'api/', include('myBoard.paymentReminder.urls')),
 ]

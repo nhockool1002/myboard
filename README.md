@@ -47,3 +47,8 @@ Run Migration
 python manage.py makemigrations app_name
 python manage.py migrate app_name
 ```
+
+
+```
+./xxx_venv/bin/python3 migrate ...
+```
