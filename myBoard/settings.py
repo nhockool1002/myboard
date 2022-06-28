@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'myBoard.notes',
     'myBoard.license',
     'myBoard.paymentReminder',
+    'myBoard.myboard_utest',
     # Extenal System
     'myBoard.categories',
     'myBoard.labels',
