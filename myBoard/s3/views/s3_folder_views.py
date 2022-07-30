@@ -202,7 +202,7 @@ class S3GetListFileByFolder(APIView):
         data = request.GET
         total = 0
         page = 0
-        row_per_page = 80
+        row_per_page = 81
         list_obj_data = []
         list_data = []
 
