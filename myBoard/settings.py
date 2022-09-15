@@ -192,10 +192,10 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
-    'https://deadcode.cf',
+    'https://myboard-fe.vercel.app',
 ]
 CSRF_TRUSTED_ORIGINS = [
-    'https://deadcode.cf',
+    'https://myboard-fe.vercel.app',
 ]
 
 S3_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg', '.mp4', '.mov']
