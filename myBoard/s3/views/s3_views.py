@@ -285,6 +285,13 @@ class S3UploadSingleImage(APIView):
         s3_client = s3Utility.connect_s3()
         fs = FileSystemStorage()
         filename = fs.save(f'{S3_TEMP_FOLDER}{uuid_key}-{img_file.name}', img_file)
+
+        file_o_name, file_o_ext = os.path.splitext(filename)
+        if file_o_ext.lower() in ['.jpg', '.png', '.jpeg']:
+            file_type = 'image'
+        else:
+            file_type = 'video'
+    
         uploaded_file_path = fs.path(filename)
 
         get_folder_id = S3FolderManagement.objects.get(folder_key=folder_key)
@@ -299,6 +306,7 @@ class S3UploadSingleImage(APIView):
                 "created_by": request.user.username,
                 "updated_by": request.user.username,
                 "bucket_id": bucket.id,
+                "file_type": file_type,
             }
             S3FileManagement.objects.create(**uploaded_data)
         except Exception as e:
