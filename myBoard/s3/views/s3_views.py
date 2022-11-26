@@ -241,6 +241,74 @@ class S3UploadSingle(APIView):
         fs.delete(uploaded_file_path)
         return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_SUCCESS']}, status=status.HTTP_200_OK)
 
+class S3UploadSingleImage(APIView):
+    permission_classes = (IsAuthenticated, IsAdminUser)
+    parser_class = (FileUploadParser,)
+
+    def post(self, request):
+        data = request.data
+        uuid_key = uuid.uuid4()
+        # Check bucketname available
+        if 'bucket_name' not in data or data['bucket_name'] == '':
+            logger.error({'message': S3_MESSAGE['EMPTY_BUCKET_NAME']})
+            return Response({'message': S3_MESSAGE['EMPTY_BUCKET_NAME']}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            bucket_name = data['bucket_name']
+        
+        # Check folder_key available
+        if 'folder_key' not in data or data['folder_key'] == '':
+            logger.error({'message': S3_FOLDER_MESSAGE['EMPTY_S3_FOLDER_KEY']})
+            return Response({'message': S3_FOLDER_MESSAGE['EMPTY_S3_FOLDER_KEY']}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            folder_key = data['folder_key']
+
+        if 'file' not in request.FILES:
+            logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_NOT_FOUND']})
+            return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_NOT_FOUND']}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            img_file = request.FILES['file']
+
+
+        file_name, file_ext = os.path.splitext(img_file.name)
+        if file_ext not in S3_ALLOWED_TYPE:
+            logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_UNVALID_EXT']})
+            return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_UNVALID_EXT']}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            bucket = S3BucketManagement.objects.get(bucket_name=bucket_name)
+        except S3BucketManagement.DoesNotExist as e:
+            logger.error({'message': str(e)})
+            logger.error({'message': S3_MESSAGE['BUCKET_NAME_NOT_EXIST']})
+            return Response({'message': S3_MESSAGE['BUCKET_NAME_NOT_EXIST']}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+        s3_client = s3Utility.connect_s3()
+        fs = FileSystemStorage()
+        filename = fs.save(f'{S3_TEMP_FOLDER}{uuid_key}-{img_file.name}', img_file)
+        uploaded_file_path = fs.path(filename)
+
+        get_folder_id = S3FolderManagement.objects.get(folder_key=folder_key)
+
+        try:
+            s3_client.upload_file(uploaded_file_path, bucket_name, f'{folder_key}/{uuid_key}-{img_file.name}', ExtraArgs={'ACL': 'public-read'})
+            uploaded_data = {
+                "file_name": img_file.name,
+                "file_key": f'{folder_key}/{uuid_key}-{img_file.name}',
+                "bucket_name": bucket_name,
+                "folder_id": get_folder_id.id,
+                "created_by": request.user.username,
+                "updated_by": request.user.username,
+                "bucket_id": bucket.id,
+            }
+            S3FileManagement.objects.create(**uploaded_data)
+        except Exception as e:
+            logger.error({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_FAILED']})
+            return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_FAILED']}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Remove temp file
+        fs.delete(uploaded_file_path)
+        return Response({'message': S3_FOLDER_MESSAGE['S3_FILE_UPLOAD_SUCCESS'], 'id': data['id']},  status=status.HTTP_200_OK)
+
 class S3UploadMultiple(APIView):
     permission_classes = (IsAuthenticated, IsAdminUser)
 
