@@ -9,20 +9,6 @@ on:
     types: [closed]
 name: 🚀 Deploy VPS
 jobs:
-  web-deploy:
-    name: 🎉 Deploy to Nhut VPS
-    runs-on: ubuntu-latest
-    steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v2
-    
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
-      with:
-        server: 116.118.49.192
-        username: ${{ secrets.FTP_NHUT_VPS_USER }}
-        password: ${{ secrets.FTP_NHUT_VPS_PASS }}
-  
   racknerd-deploy:
     name: 🎉 Deploy to Racknerd VPS
     runs-on: ubuntu-latest
