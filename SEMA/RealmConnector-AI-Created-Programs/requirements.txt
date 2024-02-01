@@ -1,0 +1,12 @@
+To create a `requirements.txt` file for this Python program, we need to identify all the package requirements. Here are the identified package requirements:
+
+```
+pandas
+matplotlib
+scikit-learn
+smtplib
+tkinter
+retry
+```
+
+You can create a `requirements.txt` file and include these package requirements.
