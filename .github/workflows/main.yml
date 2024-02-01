@@ -2,19 +2,37 @@ on:
   push:
     branches:
       - master
-name: 🚀 Deploy website on push
+  pull_request:
+    branches:
+      - develop
+      - master
+    types: [closed]
+name: 🚀 Deploy VPS
 jobs:
   web-deploy:
-    name: 🎉 Deploy
+    name: 🎉 Deploy to Nhut VPS
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v2
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.2.0
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
-        server: ftp.ngoaingutreviet.com
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /myboardapi/
+        server: 116.118.49.192
+        username: ${{ secrets.FTP_NHUT_VPS_USER }}
+        password: ${{ secrets.FTP_NHUT_VPS_PASS }}
+  
+  racknerd-deploy:
+    name: 🎉 Deploy to Racknerd VPS
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v2
+    
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: 107.174.156.33
+        username: ${{ secrets.FTP_NHUT_RACKNERD_VPS_USER }}
+        password: ${{ secrets.FTP_NHUT_RACKNERD_VPS_PASS }}

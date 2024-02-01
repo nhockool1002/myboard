@@ -1,0 +1,58 @@
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+name: 💣 Running Django Testing
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: myboard
+        ports: ['3306:3306']
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Coverage report
+      env:
+        MYBOARD_DEBUG: False
+        MYBOARD_ALLOWED_HOST: "*"
+        MYBOARD_HOSTNAME: myboard
+        MYBOARD_USERNAME: root
+        MYBOARD_PASSWORD: root
+        MYBOARD_HOST: 127.0.0.1
+        MYBOARD_PORT: 3306
+        MYBOARD_STATIC_URL: /static/
+        MYBOARD_API_URL: http://localhost:8000
+      run: |
+        pip install coverage
+        coverage run manage.py test
+        coverage report
+    - name: Django Testing
+      env:
+        MYBOARD_DEBUG: False
+        MYBOARD_ALLOWED_HOST: "*"
+        MYBOARD_HOSTNAME: myboard
+        MYBOARD_USERNAME: root
+        MYBOARD_PASSWORD: root
+        MYBOARD_HOST: 127.0.0.1
+        MYBOARD_PORT: 3306
+        MYBOARD_STATIC_URL: /static/
+        MYBOARD_API_URL: http://localhost:8000
+      run: |
+        python3 manage.py test

@@ -17,6 +17,10 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+def rel(*path):
+    return os.path.join(BASE_DIR, *path)
+
+
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
@@ -27,7 +31,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = 'django-insecure-ph3a&**pr^lq0%!^gt1r2=q-nmv690)06&hr!4ggf25rbdij#t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("MYBOARD_DEBUG")
+DEBUG = env("MYBOARD_DEBUG", default=False)
 
 ALLOWED_HOSTS = ['*']
 
@@ -43,17 +47,36 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    # Intenal System
     'myBoard.core',
+    'myBoard.s3',
+    'myBoard.setting',
+    'myBoard.notes',
+    'myBoard.license',
+    'myBoard.paymentReminder',
+    'myBoard.myboard_utest',
+    # Extenal System
+    'myBoard.categories',
+    'myBoard.labels',
+    'storages',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+
+INTERNAL_IPS = [
+    env("MYBOARD_HOST", default=False)
 ]
 
 ROOT_URLCONF = 'myBoard.urls'
@@ -83,11 +106,11 @@ WSGI_APPLICATION = 'myBoard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': env("MYBOARD_HOSTNAME"),
-        'USER': env("MYBOARD_USERNAME"),
-        'PASSWORD': env("MYBOARD_PASSWORD"),
-        'HOST': env("MYBOARD_HOST"),
-        'PORT': env("MYBOARD_PORT"),
+        'NAME': env("MYBOARD_HOSTNAME", default="myboard"),
+        'USER': env("MYBOARD_USERNAME", default="root"),
+        'PASSWORD': env("MYBOARD_PASSWORD", default="root"),
+        'HOST': env("MYBOARD_HOST", default="127.0.0.1"),
+        'PORT': env("MYBOARD_PORT", default=3306),
     }
 }
 
@@ -117,6 +140,9 @@ REST_FRAMEWORK = {
    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAdminUser'
    ),
+   'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
 }
 
 
@@ -137,9 +163,41 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = env("MYBOARD_STATIC_URL")
+STATIC_URL = env("MYBOARD_STATIC_URL", default="/static/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
+
+CORS_ALLOWED_ORIGINS = [
+    env("MYBOARD_ALLOWED_HOSTS_FRONTEND", default="http://localhost:3000")
+]
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+    'https://myboard-fe.vercel.app',
+]
+CSRF_TRUSTED_ORIGINS = [
+    'https://myboard-fe.vercel.app',
+]
+
+S3_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg', '.mp4', '.mov']
+THUMBNAILD_ALLOWED_TYPE = ['.jpg', '.png', '.jpeg']
+S3_TEMP_FOLDER = 'temp/'
