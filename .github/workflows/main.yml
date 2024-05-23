@@ -36,3 +36,5 @@ jobs:
         server: 107.174.156.33
         username: ${{ secrets.FTP_NHUT_RACKNERD_VPS_USER }}
         password: ${{ secrets.FTP_NHUT_RACKNERD_VPS_PASS }}
+
+
